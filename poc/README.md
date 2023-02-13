@@ -9,10 +9,12 @@
 
 ## Сценарий работы
 Пример ссылки:
-https://clck.ru/abcdef
+>https://clck.ru/33XgdY
+> 
 Из этой ссылки мы достаем 6 символов после знака "/". Затем с помощью библиотеки nibbles зашифровываем их в дни, часы, минуты и секунды. После находим количество секунд этих данных. Переводим это число в hex.
 
 С помощью языка программирования python мы считываем hex код файла, доставая из него корневой атом moov. Далее в чанках mvhd и tkhd мы меняем данные Creation Time, Modification Time и Track Create Date  на данные которые мы получили из ссылки. После чего перезаписываем файл. Подробнее на схеме.
+
 ![Диаграмма без названия drawio](https://user-images.githubusercontent.com/59966999/218331729-e55ebdb3-122b-4f76-b4be-fb16f6ff1dd4.png)
 
 
@@ -21,19 +23,28 @@ https://clck.ru/abcdef
 Переходим в директорию с кодом при помощи команды cd <file path>.
 
 
-![Снимок экрана от 2023-02-12 20-49-06](https://user-images.githubusercontent.com/59966999/218331825-67015968-f49f-4568-bfd4-3adf23a8bbca.png)
+![image_2023-02-14_00-25-53](https://user-images.githubusercontent.com/66170584/218578648-61f174c7-6cb9-437d-89c0-1c1b958799f4.png)
 
-Далее чтобы зашифровать данные, в командной строке набираем команду:
+Далее чтобы вкраплять данные, в командной строке набираем команду:
 
->python3 poc_mp4_link.py --em https://clck.ru/ваши6символов /file path/file.m4a /new file path/newfile.m4a
+>~$ python3 poc_mp4_link.py --em https://clck.ru/<ваши6символов> --in <path *.m4a> --out <path *.m4a>
 
-![в](https://user-images.githubusercontent.com/59966999/218332447-7731611c-2ed3-4dbf-8925-8bf24941c44d.png)
+### Пример
+
+>$ cd python3 poc_mp4_link.py —em https://clck.ru/33XgdY —in sample.m4a —out /home/kirill/poc/stego.m4a
+
+![image_2023-02-14_00-27-00](https://user-images.githubusercontent.com/66170584/218578841-b655b055-cebb-4609-b1a4-1bbc97e8b9a7.png)
+
+Чтобы извлечь данные, в командной строке набираем:
+
+>$cd python3 poc_mp4_link.py —ex <PathToStego *.m4a>
+
+### Пример 
+
+>$ cd python3 poc_mp4_link.py —ex /home/kirill/poc/stego.m4a
+
+![image_2023-02-14_00-27-31](https://user-images.githubusercontent.com/66170584/218578960-0049ccc3-277d-42c1-98f6-d8436f7b719c.png)
 
 
-Чтобы расшифровать данные, в командной строке набираем:
 
->python3 poc_mp4_link.py --ex /file path/file.m4a
-![Снимок экрана от 2023-02-12 21-00-56](https://user-images.githubusercontent.com/59966999/218332266-3fe3160a-c497-433b-ad66-90957b46657e.png)
-
-
-
+    

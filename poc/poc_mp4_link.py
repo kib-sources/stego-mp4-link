@@ -1,3 +1,23 @@
+"""
+...
+
+Create at 12.02.2023 00:00:00
+~/poc/poc_m4a_links.py
+"""
+
+__authors__ = [
+    'yourProgrammist',
+    'nurovAm'
+]
+__copyright__ = 'KIB, 2023'
+__license__ = 'LGPL'
+__credits__ = [
+    'yourProgrammist',
+    'nurovAm'
+]
+__version__ = "20230212"
+__status__ = "Production"
+
 import sys
 
 nibble2day = {
@@ -72,78 +92,10 @@ nibble2seconds = {
     'e': 58,
     'f': 59
 }
-nibble2day_ret = {
-    '1': '0',
-    '3': '1',
-    '5': '2',
-    '7': '3',
-    '9': '4',
-    '11': '5',
-    '13': '6',
-    '15': '7',
-    '17': '8',
-    '19': '9',
-    '21': 'a',
-    '23': 'b',
-    '25': 'c',
-    '26': 'd',
-    '27': 'e',
-    '28': 'f'
-}
-nibble2hour_ret = {
-    '1': '0',
-    '3': '1',
-    '5': '2',
-    '7': '3',
-    '9': '4',
-    '11': '5',
-    '13': '6',
-    '15': '7',
-    '16': '8',
-    '17': '9',
-    '18': 'a',
-    '19': 'b',
-    '20': 'c',
-    '21': 'd',
-    '22': 'e',
-    '23': 'f'
-}
-nibble2minutes_ret = {
-    '1': '0',
-    '5': '1',
-    '9': '2',
-    '13': '3',
-    '17': '4',
-    '21': '5',
-    '25': '6',
-    '29': '7',
-    '33': '8',
-    '37': '9',
-    '41': 'a',
-    '45': 'b',
-    '49': 'c',
-    '54': 'd',
-    '58': 'e',
-    '59': 'f'
-}
-nibble2seconds_ret = {
-    '1': '0',
-    '5': '1',
-    '9': '2',
-    '13': '3',
-    '17': '4',
-    '21': '5',
-    '25': '6',
-    '29': '7',
-    '33': '8',
-    '37': '9',
-    '41': 'a',
-    '45': 'b',
-    '49': 'c',
-    '54': 'd',
-    '58': 'e',
-    '59': 'f'
-}
+nibble2day_ret = {value: key for (key, value) in nibble2day.items()}
+nibble2hour_ret = {value: key for (key, value) in nibble2hour.items()}
+nibble2minutes_ret = {value: key for (key, value) in nibble2minutes.items()}
+nibble2seconds_ret = {value: key for (key, value) in nibble2seconds.items()}
 
 
 def nib(link: str) -> list[str]:
@@ -158,6 +110,8 @@ def read(filepath: str) -> list:
         while True:
             chunk_length = f.read(4)
             chunk_length_num = int.from_bytes(chunk_length, "big")
+            if len(chunk_length) < 4 and chunk_length_num != 0:
+                raise Exception("ERROR: некорректный формат!")
             chunk_length_hex = chunk_length.hex()
 
             if chunk_length_num == 0:
@@ -199,8 +153,11 @@ def en(chunks: list, nibbles: list[chr]) -> str:
     arr = []
     for i in range(len(moov['Data'])):
         if (i < 40 or i > 55) and (i < 272 or i > 279):
+            # диапазон (44, 55) - сдвиг относительно начала чанка moov, содержащий create date и modify date
+            # диапазон (272, 279) - сдвиг относительно начала чанка moov, содержащий track create date
             arr.append(moov['Data'][i])
         if i == 40:
+            # достигли начала create date и modify date
             for j in toseconds(nibbles, index):
                 arr.append(str(j))
             index += 4
@@ -208,6 +165,7 @@ def en(chunks: list, nibbles: list[chr]) -> str:
                 arr.append(str(j))
             index += 4
         elif i == 272:
+            # достигли начала track create date
             for j in toseconds(nibbles, index):
                 arr.append(str(j))
     return "".join(arr)
@@ -225,7 +183,10 @@ def new_file_str(chunks: list, new_chunk: str) -> str:
 
 def write(link: str, input_file: str, pathstego: str) -> None:
     with open(pathstego, 'wb+') as fh:
-        fh.write(bytes.fromhex(new_file_str(read(input_file), en(read(input_file), nib(link)))))
+        m4a_chunks = read(input_file)
+        nibbles_from_link = nib(link)
+        new_chunks = en(m4a_chunks, nibbles_from_link)
+        fh.write(bytes.fromhex(new_file_str(m4a_chunks, new_chunks)))
 
 
 def ex(chunks: list) -> str:
@@ -240,10 +201,13 @@ def ex(chunks: list) -> str:
 
     for i in range(len(moov['Data'])):
         if 40 <= i <= 47:
+            # диапазон [40, 47] - свдиг относительно начала чанка moov, содержащий create date
             str1 += moov['Data'][i]
         elif 48 <= i <= 55:
+            # диапазон [48, 55] - свдиг относительно начала чанка moov, содержащий modify date
             str2 += moov['Data'][i]
         elif 272 <= i <= 279:
+            # диапазон [272, 279] - свдиг относительно начала чанка moov, содержащий track create date
             str3 += moov['Data'][i]
 
     arr = nibble_ret(int(str1, 16)) + nibble_ret(int(str2, 16)) + nibble_ret(int(str3, 16))
@@ -263,20 +227,26 @@ def nibble_ret(sec: int) -> list[int]:
     sec = sec % 3600
     minutes = sec // 60
     seconds = sec % 60
-    nibble_arr.append(nibble2day_ret[str(day)])
-    nibble_arr.append(nibble2hour_ret[str(hour)])
-    nibble_arr.append(nibble2minutes_ret[str(minutes)])
-    nibble_arr.append(nibble2seconds_ret[str(seconds)])
+    nibble_arr.append(nibble2day_ret[day])
+    nibble_arr.append(nibble2hour_ret[hour])
+    nibble_arr.append(nibble2minutes_ret[minutes])
+    nibble_arr.append(nibble2seconds_ret[seconds])
     return nibble_arr
 
 
 if __name__ == "__main__":
-    param_name = sys.argv[1]
-    if param_name == '--em':
-        link = sys.argv[2]
-        input_file = sys.argv[3]
-        pathstego = sys.argv[4]
-        write(link, input_file, pathstego)
-    elif param_name == '--ex':
-        input_file = sys.argv[2]
-        print(ex(read(input_file)))
+    try:
+        param_name = sys.argv[1]
+        if param_name == '--em':
+            link = sys.argv[2]
+            if sys.argv[3] == '--in':
+                input_file = sys.argv[4]
+            if sys.argv[5] == '--out':
+                pathstego = sys.argv[6]
+            write(link, input_file, pathstego)
+        elif param_name == '--ex':
+            input_file = sys.argv[2]
+            print(ex(read(input_file)))
+    except IndexError:
+        raise Exception("ERROR: недостаточно аргументов")
+
