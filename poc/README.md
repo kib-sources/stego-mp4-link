@@ -27,21 +27,29 @@
 
 Далее чтобы вкраплять данные, в командной строке набираем команду:
 
->~$ python3 poc_mp4_link.py --em https://clck.ru/<ваши6символов> --in <path *.m4a> --out <path *.m4a>
+```bash
+~$ python3 poc_mp4_link.py --em https://clck.ru/<ваши6символов> --in <path *.m4a> --out <path *.m4a>
+```
 
 ### Пример
 
->$ cd python3 poc_mp4_link.py —em https://clck.ru/33XgdY —in sample.m4a —out /home/kirill/poc/stego.m4a
+```bash
+~$ cd python3 poc_mp4_link.py --em https://clck.ru/33XgdY --in sample.m4a --out /home/kirill/poc/stego.m4a
+```
 
 ![image_2023-02-14_00-27-00](https://user-images.githubusercontent.com/66170584/218578841-b655b055-cebb-4609-b1a4-1bbc97e8b9a7.png)
 
 Чтобы извлечь данные, в командной строке набираем:
 
->$cd python3 poc_mp4_link.py —ex <PathToStego *.m4a>
+```bash
+~$cd python3 poc_mp4_link.py --ex <PathToStego *.m4a>
+```
 
 ### Пример 
 
->$ cd python3 poc_mp4_link.py —ex /home/kirill/poc/stego.m4a
+```bash
+~$ cd python3 poc_mp4_link.py --ex /home/kirill/poc/stego.m4a
+```
 
 ![image_2023-02-14_00-27-31](https://user-images.githubusercontent.com/66170584/218578960-0049ccc3-277d-42c1-98f6-d8436f7b719c.png)
 
