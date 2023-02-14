@@ -1,5 +1,6 @@
 """
-...
+Proof Of Consept идеи записи в MP4 файла.
+См. poc\README.md
 
 Create at 12.02.2023 00:00:00
 ~/poc/poc_m4a_links.py
