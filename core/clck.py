@@ -17,10 +17,11 @@ __credits__ = [
 __version__ = "20230212"
 __status__ = "Production"
 
+from core.settins import API_TOKEN
+import os
 import requests
 
 from requests.exceptions import Timeout, ConnectionError
-
 
 class LinkShort:
     url_api = 'https://goo.su/api/links/create'
@@ -32,7 +33,7 @@ class LinkShort:
             "is_public": 1,
             "group_id": 2
         }
-        headers = {'x-goo-api-token': 'wiA1hUZnkvk7AvotYafUjjpXOsoiIpkj8kGLL8E7UHaLljVnp8nku47wSRvS'}  # API-токен
+        headers = {'x-goo-api-token': API_TOKEN}  # API-токен
         try:
             r = requests.post(self.url_api, headers=headers, data=data)  # отправляем запрос на сайт с параметрами
             return r.json()['short_url']
