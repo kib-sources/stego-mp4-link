@@ -23,5 +23,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 API_TOKEN = os.getenv('API_TOKEN', None)
+LENGTH_PASSWORD = 9
 if API_TOKEN is None:
     raise EnvironmentError("Не задана переменная окружения API_TOKEN")

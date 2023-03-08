@@ -17,10 +17,10 @@ __credits__ = [
 __version__ = "20230212"
 __status__ = "Production"
 
-from settings import API_TOKEN
+from core.settings import API_TOKEN
 import requests
 from requests.exceptions import ConnectionError
-import errors
+import core.errors as errors
 
 
 class LinkShort:

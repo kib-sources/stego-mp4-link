@@ -19,12 +19,8 @@ __status__ = "Production"
 import argparse
 import unittest
 # импортировать main из core
-import sys
-import os
-
-sys.path.insert(1, os.path.join(sys.path[0], '../core'))
 from main import main
-import errors
+import core.errors
 
 
 class TestMain(unittest.TestCase):
@@ -93,14 +89,14 @@ class TestMain(unittest.TestCase):
         massage = 'Massage'
         password = ''
         args = self.parser.parse_args(["-a", "write", '-p', password, '-m', massage])
-        with self.assertRaises(errors.NotPassword):
+        with self.assertRaises(core.errors.NotPassword):
             main(args)
 
     def test7(self):
         massage = ''
         password = 'qwerty123'
         args = self.parser.parse_args(["-a", "write", '-p', password, '-m', massage])
-        with self.assertRaises(errors.NotMessage):
+        with self.assertRaises(core.errors.NotMessage):
             main(args)
 
     def test8(self):
@@ -110,7 +106,7 @@ class TestMain(unittest.TestCase):
         url = main(args)
         args = self.parser.parse_args(["-a", "read", '-p', password, '-u', url])
         main(args)
-        with self.assertRaises(errors.MessageHasRead):
+        with self.assertRaises(core.errors.MessageHasAlreadyRead):
             main(args)
 
     def test9(self):
@@ -120,14 +116,21 @@ class TestMain(unittest.TestCase):
         url = main(args)
         password = "AmIrNUroV"
         args = self.parser.parse_args(["-a", "read", '-p', password, '-u', url])
-        with self.assertRaises(errors.WrongPassword):
+        with self.assertRaises(core.errors.WrongPassword):
             main(args)
 
     def test10(self):
         massage = 'secret'
         password = 'pass'
         args = self.parser.parse_args(["-a", "write", '-p', password, '-m', massage])
-        with self.assertRaises(errors.LengthPassword):
+        with self.assertRaises(core.errors.LengthPassword):
+            main(args)
+
+    def test11(self):
+        message = 'Very secret message'
+        password = 'pass⇐ℵ∞12345'  # non-ASCII symbols
+        args = self.parser.parse_args(["-a", "write", '-p', password, '-m', message])
+        with self.assertRaises(core.errors.NotAsciiPassword):
             main(args)
 
 

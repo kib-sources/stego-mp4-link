@@ -25,7 +25,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support import expected_conditions as EC
-import errors
+import core.errors as errors
 
 
 # по умолчанию на машине пользователя должен установлен браузер Chrome
@@ -68,7 +68,7 @@ class Privatty:
                                                "/html/body/div[1]/main/div/div/div[3]/a[1]"
                                                ))).click()
         if driver.current_url == "https://privatty.com/ru/":
-            raise errors.MessageHasRead
+            raise errors.MessageHasAlreadyRead
         message = wait.until(EC.presence_of_element_located((By.CLASS_NAME,
                                                              "sticker"
                                                              ))).text

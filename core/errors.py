@@ -19,42 +19,54 @@ __status__ = "Production"
 
 class BaseStegoProjectError(Exception):
     """
-    Базовая ошибка проектов stego-m4a+
+    Базовая ошибка проекта stego-m4a
     """
     pass
 
 
-class LengthPassword(BaseStegoProjectError):
+class PasswordError(BaseStegoProjectError):
     """
-    Ошибка длины пароля (должна быть больше 6)+
+    Базовая ошибка пароля
+    """
+
+
+class MessageError(BaseStegoProjectError):
+    """
+    Базовая ошибка сообщения
+    """
+
+
+class LengthPassword(PasswordError):
+    """
+    Ошибка длины пароля
     """
     pass
 
 
-class NotLatinPassword(BaseStegoProjectError):
+class NotAsciiPassword(PasswordError):
     """
-    Ошибка нахождения символов из кириллицы в пароле+
-    """
-    pass
-
-
-class NotPassword(BaseStegoProjectError):
-    """
-    Ошибка отсутствия пароля+
+    Ошибка нахождения символов не из ASCII в пароле
     """
     pass
 
 
-class WrongPassword(BaseStegoProjectError):
+class NotPassword(PasswordError):
     """
-    Ошибка неправильного пароля при чтении+
+    Пароль отсутствует
     """
     pass
 
 
-class NotMessage(BaseStegoProjectError):
+class WrongPassword(PasswordError):
     """
-    Ошибка отсутствия сообщения+
+    Ошибка неправильного пароля при чтении
+    """
+    pass
+
+
+class NotMessage(MessageError):
+    """
+    Сообщения отсутствует
     """
     pass
 
@@ -66,16 +78,16 @@ class TimeError(BaseStegoProjectError):
     pass
 
 
-class MessageHasRead(BaseStegoProjectError):
+class MessageHasAlreadyRead(MessageError):
     """
-    Ошибка при прочтении уже прочитанного ранее сообщения+
+    Ошибка при прочтении уже прочитанного ранее сообщения
     """
     pass
 
 
-class NotLatinMassage(BaseStegoProjectError):
+class NotAsciiMassage(MessageError):
     """
-    Ошибка нахождения символов из кириллицы в сообщении+
+    Ошибка нахождения символов не из ASCII в сообщении
     """
 
 
