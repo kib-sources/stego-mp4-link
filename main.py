@@ -28,7 +28,7 @@ from core.privatty import Privatty
 from core.clck import LinkShort
 import core.errors as errors
 from core.settings import LENGTH_PASSWORD
-from string import ascii_letters, digits, punctuation
+from string import printable
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -53,7 +53,7 @@ parser.add_argument(
 
 
 def check(word):
-    return all(map(lambda c: c in ascii_letters + digits + punctuation, word))
+    return all(map(lambda c: c in printable, word))
 
 
 def main(args: argparse.Namespace) -> str:
