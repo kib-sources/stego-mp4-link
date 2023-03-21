@@ -18,8 +18,7 @@ __status__ = "Production"
 
 import argparse
 import unittest
-# импортировать main из core
-from main import main
+from core.main import main
 import core.errors
 
 

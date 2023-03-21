@@ -250,4 +250,3 @@ if __name__ == "__main__":
             print(ex(read(input_file)))
     except IndexError:
         raise Exception("ERROR: недостаточно аргументов")
-
