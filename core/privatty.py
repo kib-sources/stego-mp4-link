@@ -33,7 +33,7 @@ import core.errors as errors
 class Privatty:
     chrome_options = Options()
     chrome_options.add_argument("--headless")  # режим-призрак для браузера
-    url_privatty = "https://privatty.com/ru/"
+    url_privatty = "https://safenote.co/"
 
     @classmethod
     def write_message(cls, message: str) -> str:
@@ -43,12 +43,12 @@ class Privatty:
         driver.get(cls.url_privatty)
         wait = WebDriverWait(driver, 10)
         element = wait.until(
-            EC.element_to_be_clickable((By.ID, "fld_note")))  # нажимаем на textarea, чтобы активировать ввод текста
+            EC.element_to_be_clickable((By.NAME, "note")))  # нажимаем на textarea, чтобы активировать ввод текста
         element.click()
-        wait.until(EC.visibility_of_element_located((By.ID, "fld_note"))).send_keys(message)
-        wait.until(EC.element_to_be_clickable((By.ID, "creation_btn"))).click()
+        wait.until(EC.visibility_of_element_located((By.NAME, "note"))).send_keys(message)
+        wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="target"]/div[3]/div/div[2]/input'))).click()
 
-        url = wait.until(EC.visibility_of_element_located((By.ID, "privurl"))).get_property("value")
+        url = wait.until(EC.visibility_of_element_located((By.ID, 'link'))).get_property("value")
         driver.quit()  # выход из веб-драйвера
         return url
 
@@ -60,17 +60,18 @@ class Privatty:
         driver.get(short_url)
         try:
             if driver.find_element(By.CLASS_NAME, "code").text == '404':
-                raise errors.WrongPassword
+                raise errors.WrongPassword("В файл ничего не вкраплено либо пароль неверный!")
         except selenium.common.exceptions.NoSuchElementException:
             pass
         # нажимаем на кнопку "Да, показать запись"
+        if driver.current_url == "https://safenote.co/expired":
+            raise errors.MessageHasAlreadyRead("Сообщение было прочитано ранее")
         wait.until(EC.element_to_be_clickable((By.XPATH,
-                                               "/html/body/div[1]/main/div/div/div[3]/a[1]"
+                                               '/html/body/div[2]/div/div/div/div/form/div[2]/div/div[2]/button'
                                                ))).click()
-        if driver.current_url == "https://privatty.com/ru/":
-            raise errors.MessageHasAlreadyRead
-        message = wait.until(EC.presence_of_element_located((By.CLASS_NAME,
-                                                             "sticker"
+
+        message = wait.until(EC.presence_of_element_located((By.ID,
+                                                             "note"
                                                              ))).text
         driver.quit()  # выход из веб-драйвера
         return message

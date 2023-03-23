@@ -96,3 +96,30 @@ class ConnectionError(BaseStegoProjectError):
     Ошибка соединения
     """
     pass
+
+
+class WriteError(BaseStegoProjectError):
+    """
+    Базовая ошибка при записи в файл *.m4a
+    """
+    pass
+
+
+class FormatError(WriteError):
+    """
+    Неверный формат
+    """
+    pass
+
+
+class NoFile(WriteError):
+    """
+    Файла не существует
+    """
+    pass
+
+
+class NoM4a(WriteError):
+    """
+    Файл не в формате m4
+    """
