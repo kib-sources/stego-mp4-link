@@ -2,6 +2,15 @@
 Тест на запись чтение файлов m4a
 Create at 27.02.2023 12:43:59
 ~tests/test_work_with_m4a.py
+EXAMPLES
+Перемещаемся в директорию с тестами
+>> cd tests
+Тест, направленный на проверку нормальной работы с записью/чтением сообщения
+>> python3 -m unittest test_work_with_m4a.TestMain.test1
+Тест, направленный на получение ошибки об уже прочитанном ранее сообщении
+>> python3 -m unittest test_work_with_m4a.TestMain.test5
+Тест, направленный на ошибку контейнера m4a
+>> python3 -m unittest test_work_with_m4a.TestMain.test6
 """
 
 __authors__ = [
@@ -19,10 +28,10 @@ __status__ = "Production"
 
 import argparse
 import unittest
+import repackage
+repackage.up()
 from stego import write_read_m4a
 import core.errors
-
-
 class TestMain(unittest.TestCase):
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -91,7 +100,7 @@ class TestMain(unittest.TestCase):
         pathin = '../poc/thispathisempty.m4a'
         pathout = '../poc/stego_massage3.m4a'
         args = self.parser.parse_args(["-a", "write", '-p', password, '-m', message, '-i', pathin, '-o', pathout])
-        with self.assertRaises(core.errors.NoFile):
+        with self.assertRaises(core.errors.FileContainerError):
             write_read_m4a(args)
 
     def test5(self):
@@ -112,7 +121,7 @@ class TestMain(unittest.TestCase):
         pathin = '../poc/sample4.m4a'
         pathout = '../poc/stego_massage3.txt'
         args = self.parser.parse_args(["-a", "write", '-p', password, '-m', message, '-i', pathin, '-o', pathout])
-        with self.assertRaises(core.errors.NoM4a):
+        with self.assertRaises(core.errors.FileContainerError):
             write_read_m4a(args)
 
 

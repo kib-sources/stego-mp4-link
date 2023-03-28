@@ -98,28 +98,9 @@ class ConnectionError(BaseStegoProjectError):
     pass
 
 
-class WriteError(BaseStegoProjectError):
+class FileContainerError(BaseStegoProjectError):
     """
-    Базовая ошибка при записи в файл *.m4a
-    """
-    pass
-
-
-class FormatError(WriteError):
-    """
-    Неверный формат
+    Ошибка *.m4a файла
     """
     pass
 
-
-class NoFile(WriteError):
-    """
-    Файла не существует
-    """
-    pass
-
-
-class NoM4a(WriteError):
-    """
-    Файл не в формате m4
-    """

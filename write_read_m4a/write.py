@@ -25,6 +25,9 @@ from core.errors import *
 
 
 def nib(link: list[chr]) -> list[str]:
+    """
+    Получение нибблов из ссылки
+    """
     reference_split = [str(len(link))] + link
     reference_split = ''.join(reference_split)
     nibbles = [nibble for nibble in reference_split.encode('ascii').hex()]
@@ -39,7 +42,7 @@ def read(filepath: str) -> list:
                 chunk_length = f.read(4)
                 chunk_length_num = int.from_bytes(chunk_length, "big")
                 if len(chunk_length) < 4 and chunk_length_num != 0:
-                    raise FormatError("Неверный формат!")
+                    raise FileContainerError("Неверный формат!")
                 chunk_length_hex = chunk_length.hex()
 
                 if chunk_length_num == 0:
@@ -58,7 +61,7 @@ def read(filepath: str) -> list:
                 m4a_chunks.append(chunks)
         return m4a_chunks
     except FileNotFoundError:
-        raise NoFile("Файл для вкрапления *.m4a отсутсвует!")
+        raise FileContainerError("Файл для вкрапления *.m4a отсутсвует!")
 
 
 def toseconds(nibbles: list, index: int) -> str:
@@ -81,6 +84,7 @@ def toseconds(nibbles: list, index: int) -> str:
         a = '0' + a
     return a
 
+
 def en(chunks: list, nibbles: list[chr]) -> str:
     index = 0
     moov = {}
@@ -92,35 +96,35 @@ def en(chunks: list, nibbles: list[chr]) -> str:
     i = 0
     while i < len(moov['Data']):
         if i == 40 and len(nibbles) > 0:
-            # достигли начала create date и modify date
+            # достигли начала create date
             for j in toseconds(nibbles, index):
                 arr.append(str(j))
-                i+=1
+                i += 1
             index += 4
         elif i == 48 and len(nibbles) > 4:
+            # достигли начала modify date
             for j in toseconds(nibbles, index):
                 arr.append(str(j))
-                i+=1
+                i += 1
             index += 4
         elif i == 272 and len(nibbles) > 8:
             # достигли начала track create date
             for j in toseconds(nibbles, index):
                 arr.append(str(j))
-                i+=1
+                i += 1
             index += 4
         elif i == 280 and len(nibbles) > 12:
             # достигли начала track modification time
             for j in toseconds(nibbles, index):
                 arr.append(str(j))
-                i+=1
+                i += 1
         else:
             arr.append(moov['Data'][i])
-            i+=1
+            i += 1
     return "".join(arr)
 
 
 def new_file_str(chunks: list, new_chunk: str) -> str:
-    new_str = ''
     for i in range(len(chunks)):
         if chunks[i]['Type'] == 'moov':
             chunks[i]['Data'] = new_chunk
@@ -161,7 +165,7 @@ def ex(chunks: list):
             # диапазон [279, 287] - свдиг относительно начала чанка moov, содержащий track modification date
             str4 += moov['Data'][i]
 
-    str = nibble_ret(int(str1, 16)) + nibble_ret(int(str2, 16)) + nibble_ret(int(str3, 16))
+    str = nibble_ret(int(str1, 16)) + nibble_ret(int(str2, 16)) + nibble_ret(int(str3, 16)) # перевод в 10-ричную сс
     if int(nibble_ret(int(str1, 16))[0]) >= 6:
         str += nibble_ret(int(str4, 16))
 

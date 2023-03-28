@@ -29,18 +29,30 @@ import core.errors as errors
 
 
 # по умолчанию на машине пользователя должен установлен браузер Chrome
+URL_PRIVATTY = "https://safenote.co/"
 
-class Privatty:
+
+class BasePrivatty:
+
+    @classmethod
+    def write_message(cls, message: str) -> str:
+        return NotImplemented
+
+    @classmethod
+    def read_massage(cls, short_url: str) -> str:
+        return NotImplemented
+
+
+class Privatty(BasePrivatty):
     chrome_options = Options()
     chrome_options.add_argument("--headless")  # режим-призрак для браузера
-    url_privatty = "https://safenote.co/"
 
     @classmethod
     def write_message(cls, message: str) -> str:
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),
                                   options=cls.chrome_options)
         driver.set_window_size(1920, 1080)
-        driver.get(cls.url_privatty)
+        driver.get(URL_PRIVATTY)
         wait = WebDriverWait(driver, 10)
         element = wait.until(
             EC.element_to_be_clickable((By.NAME, "note")))  # нажимаем на textarea, чтобы активировать ввод текста

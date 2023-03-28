@@ -65,7 +65,9 @@ def main(args: argparse.Namespace):
         sh_link = "https://goo.su/" + Cipher.from_hex_to_text(ex)
         en_massage = Privatty.read_message(sh_link)  # если пароль верен, ссылка отправит на сайт www.privatty.com
         # расшифровываем сообщение в обратном порядке en_massage -> decodebase64 -> decode AES -> massage
-        ex_massage = str(Cipher.decrypt_message(
+        bytes_ex_massage = bytes(en_massage, encoding='utf-8')
+        ex_massage = Cipher.decrypt_message(
             args.password,
-            bytes(en_massage, encoding='utf-8')))[2:-1]
-        return ex_massage
+            bytes_ex_massage
+        )
+        return str(ex_massage)[2:-1]

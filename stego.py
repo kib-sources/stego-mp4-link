@@ -2,6 +2,9 @@
 Запись и чтение сообщения с сервиса privatty.py
 Create at 27.02.2023 12:43:59
 ~stego.py
+Examples bash:
+~$python3 stego.py -a write -p password123 -m Massage -i poc/sample3.m4a -o poc/stego.m4a
+~$python3 stego.py -a read -p password123 -o poc/stego.m4a
 """
 
 __authors__ = [
@@ -57,16 +60,17 @@ def write_read_m4a(args: argparse.Namespace) -> str:
     if args.action == 'write':
         link = main(args)
         if args.pathstego.split('.')[-1] != 'm4a':
-            raise NoM4a("Файл не в формате m4a!")
+            raise FileContainerError("Файл не в формате m4a!")
         main_write(link, args.pathin, args.pathstego)
     if args.action == 'read':
         link = main_read(args.pathstego)
         args.url = link
-        return main(args)
+        ex_massage = main(args)
+        print("Расшифрованное сообщение:  " + ex_massage + '\033[31m')
+        print("Пароль верен!" + '\033[0m')
+        return ex_massage
 
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    ex_massage = write_read_m4a(args)
-    print("Расшифрованное сообщение:  " + ex_massage + '\033[31m')
-    print("Пароль верен!" + '\033[0m')
+    write_read_m4a(args)
