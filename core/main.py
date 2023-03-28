@@ -1,11 +1,7 @@
 """
-Работа с консолью
+Шифрование и расшифрование сообщения с сервиса safenote.co
 Create at 27.02.2023 12:43:59
-~main.py
-Example:
-    $ python3 main.py -a write -p password123 -m 'Very secret massage!!!'
-    ...
-    $ python3 main.py -a read -p password123 -u https://goo.su/0x80xe0x10x380x3
+~core/main.py
 """
 
 __authors__ = [
@@ -30,33 +26,12 @@ import core.errors as errors
 from core.settings import LENGTH_PASSWORD
 from string import printable
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    "-p", "--password",
-    type=str,
-    help='enter your password',
-    required=True)
-parser.add_argument(
-    "-m", "--massage",
-    type=str,
-    required=False,
-    help='enter your massage')
-parser.add_argument(
-    "-a", "--action",
-    required=True,
-    choices=['write', 'read'])
-parser.add_argument(
-    '-u', "--url",
-    required=False,
-    type=str,
-    help='enter URL')
-
 
 def check(word):
     return all(map(lambda c: c in printable, word))
 
 
-def main(args: argparse.Namespace) -> str:
+def main(args: argparse.Namespace):
     if args.action == 'write':
         if not args.password:
             raise errors.NotPassword("Пароль отсутствует!")
@@ -74,39 +49,25 @@ def main(args: argparse.Namespace) -> str:
             url = Privatty.write_message(str(encrypted_massage)[2:-1])  # записываем зашифрованное сообщение
         except selenium.common.exceptions.TimeoutException:
             raise errors.TimeError("Время запроса превышено!")
-        print(f'Изначальное URl {url}')
-        print(f'Сообщение в privatty - {str(encrypted_massage)[2:-1]}')
         sh_link = LinkShort.short_link(url)  # сокращаем ссылку
-        print(f'Сокращённая незашифрованная URL: {sh_link}')
         string = sh_link.split('/')[-1]
         hex_arr = ([hex(ord(i)) for i in string])
-        en = [hex(i) for i in Cipher.vernam(hex_arr, args.password)]
-        print(f'Сокращённая зашифрованная URL: https://goo.su/{"".join(en)}')
-        return 'https://goo.su/' + "".join(en)
+        return [chr(i) for i in Cipher.vernam(hex_arr, args.password)]
         # далее записываем сокращённую шифрованную URL в файл m4a (нибблы)
     elif args.action == 'read':
         # предварительно вытаскиваем нибблы и получаем шифрованную короткую ссылку
         sh_en_link = args.url
-        sh_en_link = sh_en_link
-        print(f'Полученная ссылка: {sh_en_link}')
-        arr = [int(i, 16) for i in sh_en_link.split('/')[-1].split('0x') if i]
-        arr_hex = [hex(i) for i in arr]
+        new_link = []
+        for i in range(0, len(sh_en_link) - 1, 2):
+            new_link.append(sh_en_link[i] + sh_en_link[i + 1])
+        arr_hex = ([hex(int(i, 16)) for i in new_link])
         ex = [hex(i) for i in Cipher.vernam(arr_hex, args.password)]
         sh_link = "https://goo.su/" + Cipher.from_hex_to_text(ex)
-        print(f"Расшифрованная ссылка: {sh_link}")
         en_massage = Privatty.read_message(sh_link)  # если пароль верен, ссылка отправит на сайт www.privatty.com
         # расшифровываем сообщение в обратном порядке en_massage -> decodebase64 -> decode AES -> massage
-        print(f'Полученное сообщение: {en_massage}')
-        ###
-        ex_massage = str(Cipher.decrypt_message(
+        bytes_ex_massage = bytes(en_massage, encoding='utf-8')
+        ex_massage = Cipher.decrypt_message(
             args.password,
-            bytes(en_massage, encoding='utf-8')))[2:-1]
-        print("Расшифрованное сообщение:  " + ex_massage + '\033[31m')
-        print("Пароль верен!" + '\033[0m')
-        return ex_massage
-
-
-if __name__ == "__main__":
-    args = parser.parse_args()
-    main(args)
-    exit()
+            bytes_ex_massage
+        )
+        return str(ex_massage)[2:-1]

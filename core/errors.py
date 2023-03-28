@@ -96,3 +96,11 @@ class ConnectionError(BaseStegoProjectError):
     Ошибка соединения
     """
     pass
+
+
+class FileContainerError(BaseStegoProjectError):
+    """
+    Ошибка *.m4a файла
+    """
+    pass
+
