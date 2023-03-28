@@ -22,7 +22,7 @@ __status__ = "Production"
 
 import argparse
 from core.main import main
-from write_read_m4a.write import main_write, main_read
+from core.write_read_m4a.write import main_write, main_read
 from core.errors import *
 parser = argparse.ArgumentParser()
 parser.add_argument(
