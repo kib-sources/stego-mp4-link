@@ -3,6 +3,13 @@
 Create at 27.02.2023 12:43:59
 ~core/cipher.py
 """
+
+from Cryptodome.Cipher import AES
+from Cryptodome.Protocol.KDF import PBKDF2
+from Cryptodome.Hash import SHA512
+import base64
+from base64 import b64decode
+
 __authors__ = [
     'yourProgrammist',
     'nurovAm'
@@ -16,12 +23,6 @@ __credits__ = [
 __version__ = "20230212"
 __status__ = "Production"
 
-from Cryptodome.Cipher import AES
-from Cryptodome.Protocol.KDF import PBKDF2
-from Cryptodome.Hash import SHA512
-import base64
-from base64 import b64decode
-
 KEY_LENGTH = 32
 STEGO_ENCODING = 'ascii'
 
@@ -34,6 +35,9 @@ class Cipher:
 
     @classmethod
     def encrypt_message(cls, password: str, massage: str) -> bytes:
+        """
+        Шифрование сообщения
+        """
         key = PBKDF2(password,
                      cls.salt,
                      KEY_LENGTH,
@@ -46,6 +50,9 @@ class Cipher:
 
     @classmethod
     def decrypt_message(cls, password: str, base64_message: bytes):
+        """
+        Расшифровка сообщения
+        """
         message_bytes = str(b64decode(base64_message))
         s = message_bytes[2:-1].replace('\\\\', '\\')
         result = s.encode('latin1').decode('unicode_escape').encode('latin1')

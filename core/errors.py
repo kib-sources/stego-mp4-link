@@ -89,6 +89,13 @@ class NotAsciiMassage(MessageError):
     """
     Ошибка нахождения символов не из ASCII в сообщении
     """
+    pass
+
+
+class LengthMassage(MessageError):
+    """
+    Ошибка превышения количества символов для элемента сервиса
+    """
 
 
 class ConnectionError(BaseStegoProjectError):
@@ -104,3 +111,23 @@ class FileContainerError(BaseStegoProjectError):
     """
     pass
 
+
+class ServiceError(BaseStegoProjectError):
+    """
+    Ошибка доступа к сервису одноразовых записок
+    """
+    pass
+
+
+class NoService(ServiceError):
+    """
+    Ошибка отсутствия сервиса в числе возможных
+    """
+    pass
+
+
+class FlagsError(BaseStegoProjectError):
+    """
+    Ошибка несовместимости классов
+    """
+    pass

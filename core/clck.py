@@ -4,6 +4,11 @@ Create at 27.02.2023 12:43:59
 ~core/clck.py
 """
 
+from core.settings import API_TOKEN
+import requests
+from requests.exceptions import ConnectionError
+import core.errors as errors
+
 __authors__ = [
     'yourProgrammist',
     'nurovAm'
@@ -17,17 +22,17 @@ __credits__ = [
 __version__ = "20230212"
 __status__ = "Production"
 
-from core.settings import API_TOKEN
-import requests
-from requests.exceptions import ConnectionError
-import core.errors as errors
+Link = str
 
 
 class LinkShort:
     url_api = 'https://goo.su/api/links/create'
 
     @classmethod
-    def short_link(cls, url: str) -> str:
+    def short_link(cls, url: Link) -> Link:
+        """
+        Отправка POST-запроса на goo.su, получение сокращённой ссылки
+        """
         data = {
             "url": url,
         }
