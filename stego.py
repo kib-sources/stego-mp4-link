@@ -4,6 +4,7 @@ Create at 27.02.2023 12:43:59
 ~stego.py
 Examples bash:
 ~$python3 stego.py --em -p password123 -m massage -i poc/sample2.m4a -o poc/stego.m4a
+
 ~$python3 stego.py --ex -p password123 -i poc/stego.m4a
 """
 
@@ -63,6 +64,13 @@ parser.add_argument(
     type=str,
     default='privatty',
     choices=['privatty', 'onetimesecret'],
+    help='enter service')
+parser.add_argument(
+    '-l', "--link",
+    required=False,
+    type=str,
+    default='goo',
+    choices=['goo'],
     help='enter service')
 parser.add_argument(
     '-q', "--quiet",

@@ -3,8 +3,13 @@
 Create at 06.05.2023 21:55:54
 ~core/sdarn/base.py
 """
+
 from typing import Optional
 import requests
+import selenium
+
+import core.errors
+from core.cipher import Cipher
 
 __authors__ = [
     'yourProgrammist',
@@ -18,6 +23,7 @@ __credits__ = [
 ]
 __version__ = "20230212"
 __status__ = "Production"
+
 Link = str
 Message = str
 Key = str
@@ -28,7 +34,7 @@ class BaseSdarn:
     """
     self-destruct after being read notes.
     """
-    # базовый урл.
+    name = None
     _base_url = None
 
     @classmethod
@@ -70,14 +76,30 @@ class BaseSdarn:
     @classmethod
     def write(cls, message: Message, key: Key) -> Link:
         """
-        Вызов функции записи raw_write
+        Шифрование сообщения и вызов функции записи raw_write
         """
-        row_message = 'TODO'
-        return cls.raw_write(row_message)
+        if len(message) + len(message) * 0.34 > cls.max_length():  # base64 увеличивает кол-во символов в 1/3 раза
+            raise core.errors.LengthMassage("Количество символов должно быть не больше  " + str(cls.max_length()))
+        if not cls.check_access():
+            raise core.errors.ServiceError("Ошибка доступа к сервису")
+        encrypted_massage = Cipher.encrypt_message(key,
+                                                   message)  # шифруем сообщение через AES -> base64
+        try:
+            url = cls.raw_write(str(encrypted_massage)[2:-1])
+            return url
+        except selenium.common.exceptions.TimeoutException:
+            raise core.errors.TimeError("Время запроса превышено!")
 
     @classmethod
     def read(cls, link: Link, key: Key) -> Message:
-        assert isinstance(cls._base_url, str)
-        assert link.startswith(cls._base_url)
-        return cls.raw_read(link)
+        """
+        Вызов функции raw_read, расшифрование сообщения
+        """
+        encrypted_massage = cls.raw_read(link)
+        bytes_ex_massage = bytes(encrypted_massage, encoding='utf-8')
+        ex_massage = Cipher.decrypt_message(
+            key,
+            bytes_ex_massage
+        )
+        return str(ex_massage)[2:-1]
 

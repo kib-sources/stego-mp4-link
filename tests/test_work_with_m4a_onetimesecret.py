@@ -4,13 +4,21 @@ Create at 27.02.2023 12:43:59
 ~tests/test_work_with_m4a_onetimesecret.py
 EXAMPLES
 Перемещаемся в директорию с тестами
+
 >> cd tests
+
 Тест, направленный на проверку нормальной работы с записью/чтением сообщения
+
 >> python3 -m unittest test_work_with_m4a_onetimesecret.TestMain.test1
+
 Тест, направленный на получение ошибки об уже прочитанном ранее сообщении
+
 >> python3 -m unittest test_work_with_m4a_onetimesecret.TestMain.test5
+
 Тест, направленный на ошибку контейнера m4a
+
 >> python3 -m unittest test_work_with_m4a_onetimesecret.TestMain.test6
+
 """
 
 import argparse
@@ -53,6 +61,13 @@ class TestMain(unittest.TestCase):
         "-m", "--massage",
         type=str,
         help='enter your massage')
+    parser.add_argument(
+        '-l', "--link",
+        required=False,
+        type=str,
+        default='goo',
+        choices=['goo'],
+        help='enter service')
     parser.add_argument(
         '-i', "--input",
         type=str,

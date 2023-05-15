@@ -4,8 +4,7 @@ Create at 27.02.2023 12:43:59
 """
 
 import argparse
-from core.cipher import Cipher
-from core.clck import LinkShort
+from core.shortlink.goo import Goo
 import core.errors as errors
 from core.settings import LENGTH_PASSWORD
 from string import printable
@@ -28,7 +27,8 @@ __status__ = "Production"
 
 name2sdarn = {
     core.sdarn.privatty.PrivattySdarn.name: core.sdarn.privatty.PrivattySdarn,
-    core.sdarn.onetimesecret.OneTimeSecretSdarn.name: core.sdarn.onetimesecret.OneTimeSecretSdarn
+    core.sdarn.onetimesecret.OneTimeSecretSdarn.name: core.sdarn.onetimesecret.OneTimeSecretSdarn,
+    core.shortlink.goo.Goo.name: core.shortlink.goo.Goo
 }
 
 
@@ -68,33 +68,20 @@ def main(args: argparse.Namespace):
             args.massage,
             args.password
         )
-        sh_link = LinkShort.short_link(url)  # сокращаем ссылку
-        string = sh_link.split('/')[-1]
-        hex_arr = ([hex(ord(i)) for i in string])
-        if args.debug:
-            print(f'URL - {url}\nSHORT URL - {sh_link}\nHEX SHORT URL - {hex_arr}')
-        return [chr(i) for i in Cipher.vernam(
-            hex_arr,
-            args.password
-        )]
-        # далее записываем сокращённую шифрованную URL в файл m4a (нибблы)
+        sh_link = getSdarnClass(args.link).write(
+            url
+        )
+        return Goo.raw_write(sh_link, args.password)
     elif args.ex:
         if args.debug:
             print('------------------------EXTRACT MODE------------------------')
-        # предварительно вытаскиваем нибблы и получаем шифрованную короткую ссылку
         sh_en_link = args.url
-        new_link = []
-        for i in range(0, len(sh_en_link) - 1, 2):
-            new_link.append(sh_en_link[i] + sh_en_link[i + 1])
-        arr_hex = ([hex(int(i, 16)) for i in new_link])
-        ex = [hex(i) for i in Cipher.vernam(
-            arr_hex,
-            args.password
-        )]
-
-        sh_link = "https://goo.su/" + Cipher.from_hex_to_text(ex)
+        sh_link = getSdarnClass(args.link).read(
+            args.password,
+            sh_en_link
+        )
         if args.debug:
-            print(f'HEX SHORT URL - {ex}\nSHORT URL - {sh_link}')
+            print(f'SHORT URL - {sh_link}')
         return getSdarnClass(args.name).read(
             sh_link,
             args.password

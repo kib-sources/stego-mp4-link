@@ -14,7 +14,6 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support import expected_conditions as EC
 import core.errors as errors
 from core.sdarn.base import BaseSdarn
-from core.cipher import *
 
 __authors__ = [
     'yourProgrammist',
@@ -107,38 +106,4 @@ class PrivattySdarn(BaseSdarn):
                                                              ))).text
         driver.quit()  # выход из веб-драйвера
         return message
-
-    @classmethod
-    def write(cls, message: Message, key: Key) -> Link:
-        """
-        Проверка на длину сообщения, его шифрование и вызов функции raw_write
-        """
-        if len(message) + len(message) * 0.34 > cls.max_length(): # base64 увеличивает кол-во символов в 1/3 раза
-            raise errors.LengthMassage("Количество символов должно быть равным " + str(cls.max_length()))
-        if not cls.check_access():
-            raise errors.ServiceError("Ошибка доступа к сервису")
-        encrypted_massage = Cipher.encrypt_message(key,
-                                                   message)  # шифруем сообщение через AES -> base64
-        try:
-            url = cls.raw_write(str(encrypted_massage)[2:-1])
-            return url
-        except selenium.common.exceptions.TimeoutException:
-            raise errors.TimeError("Время запроса превышено!")
-
-    @classmethod
-    def read(cls, link: Link, key: Key) -> Message:
-        """
-        Вызов функции raw_read, расшифрование сообщения
-        """
-        assert isinstance(cls._base_url, str)
-        assert link.startswith("https://goo.su/")
-
-        encrypted_massage = cls.raw_read(link)
-        bytes_ex_massage = bytes(encrypted_massage, encoding='utf-8')
-        ex_massage = Cipher.decrypt_message(
-            key,
-            bytes_ex_massage
-        )
-        return str(ex_massage)[2:-1]
-
 

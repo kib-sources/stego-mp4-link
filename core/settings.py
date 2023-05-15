@@ -3,6 +3,7 @@
 Create at 01.03.2023 17:03:31
 ~/core/settings.py
 """
+
 import os
 from dotenv import load_dotenv
 
