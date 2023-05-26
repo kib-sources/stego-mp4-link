@@ -1,11 +1,9 @@
 """
-Написать запись в файл
-На вход от 4 - 7 символов
-На выход ссылка
 Create at 13.03.2023 18:42:40
-~write_read_m4a/write.py
+~core/write_read_m4a/write.py
 """
-
+from core.write_read_m4a.nibbles import *
+from core.errors import *
 
 __authors__ = [
     'yourProgrammist',
@@ -20,8 +18,9 @@ __credits__ = [
 __version__ = "20230212"
 __status__ = "Production"
 
-from core.write_read_m4a.nibbles import *
-from core.errors import *
+FilePath = str
+Nibbles = list[int]
+Chunks = list
 
 
 def nib(link: list[chr]) -> list[str]:
@@ -34,9 +33,14 @@ def nib(link: list[chr]) -> list[str]:
     return nibbles
 
 
-def read(filepath: str) -> list:
+def read(filepath: FilePath) -> Chunks:
+    """
+    Чтение чанков из файла *.m4a
+    """
     m4a_chunks = []
     try:
+        if filepath is None:
+            raise FileContainerError("Не введён флаг -i --input")
         with open(filepath, 'rb') as f:
             while True:
                 chunk_length = f.read(4)
@@ -64,7 +68,10 @@ def read(filepath: str) -> list:
         raise FileContainerError("Файл для вкрапления *.m4a отсутсвует!")
 
 
-def toseconds(nibbles: list, index: int) -> str:
+def toseconds(nibbles: Nibbles, index: int) -> str:
+    """
+    Перевод даты в единый числовой формат
+    """
     day = 0
     hour = 0
     minutes = 0
@@ -85,7 +92,10 @@ def toseconds(nibbles: list, index: int) -> str:
     return a
 
 
-def en(chunks: list, nibbles: list[chr]) -> str:
+def en(chunks: Chunks, nibbles: Nibbles) -> str:
+    """
+    Внедрение информации в файл
+    """
     index = 0
     moov = {}
     for i in range(len(chunks)):
@@ -124,24 +134,31 @@ def en(chunks: list, nibbles: list[chr]) -> str:
     return "".join(arr)
 
 
-def new_file_str(chunks: list, new_chunk: str) -> str:
+def new_file_str(chunks: Chunks, new_chunk: str) -> str:
     for i in range(len(chunks)):
         if chunks[i]['Type'] == 'moov':
             chunks[i]['Data'] = new_chunk
     new_str = chunks[0]['Data'] + chunks[1]['Data'] + chunks[2]['Data'] + chunks[3]['Data']
-
     return new_str
 
 
-def write(link: str, input_file: str, pathstego: str) -> None:
+def main_write(link: str, input_file: FilePath, pathstego: FilePath, debug: bool) -> None:
+    """
+    Запись чанков в новый файл *.m4a
+    """
     with open(pathstego, 'wb+') as fh:
         m4a_chunks = read(input_file)
         nibbles_from_link = nib(link)
+        if debug:
+            print(f'NIBBLES FROM LINK - {nibbles_from_link}')
         new_chunks = en(m4a_chunks, nibbles_from_link)
         fh.write(bytes.fromhex(new_file_str(m4a_chunks, new_chunks)))
 
 
-def ex(chunks: list):
+def ex(chunks: Chunks) -> list[str]:
+    """
+    Извлечение информации и получение нибблов
+    """
     moov = {}
     for i in range(len(chunks)):
         if chunks[i]['Type'] == 'moov':
@@ -175,6 +192,9 @@ def ex(chunks: list):
 
 
 def nibble_ret(sec: int) -> str:
+    """
+    Получение даты из единого числового формата
+    """
     nibble_arr = []
     day = (sec // 86400) + 1
     sec = sec % 86400
@@ -191,17 +211,12 @@ def nibble_ret(sec: int) -> str:
         nibble_arr.append(nibble2minutes_ret[minutes])
     if seconds > 0:
         nibble_arr.append(nibble2seconds_ret[seconds])
-    str = ''
+    ans = ''
     for i in range(len(nibble_arr)):
-        str += nibble_arr[i]
-    ans = bytes.fromhex(str).decode('UTF-8')
+        ans += nibble_arr[i]
+    ans = bytes.fromhex(ans).decode('UTF-8')
     return ans
 
 
-def main_write(link: str, filepath: str, pathstego: str) -> None:
-    write(link, filepath, pathstego)
-    print('\033[31m' + 'Message has been interspersed successfully!' + '\033[0m')
-
-
-def main_read(pathstego: str):
+def main_read(pathstego: FilePath):
     return ex(read(pathstego))

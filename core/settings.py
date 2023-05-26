@@ -4,6 +4,9 @@ Create at 01.03.2023 17:03:31
 ~/core/settings.py
 """
 
+import os
+from dotenv import load_dotenv
+
 __authors__ = [
     'yourProgrammist',
     'nurovAm'
@@ -16,10 +19,6 @@ __credits__ = [
 ]
 __version__ = "20230212"
 __status__ = "Production"
-
-import os
-
-from dotenv import load_dotenv
 
 load_dotenv()
 API_TOKEN = os.getenv('API_TOKEN', None)

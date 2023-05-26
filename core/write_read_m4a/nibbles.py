@@ -1,7 +1,7 @@
 """
 Словари для нибблов
 Create at 27.02.2023 12:43:59
-~write_read_m4a/nibbles.py
+~core/write_read_m4a/nibbles.py
 """
 __authors__ = [
     'yourProgrammist',
@@ -15,6 +15,7 @@ __credits__ = [
 ]
 __version__ = "20230212"
 __status__ = "Production"
+
 nibble2day = {
     '0': 1,
     '1': 3,
