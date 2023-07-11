@@ -5,6 +5,8 @@
 ## Содержание
 - [Технологии](#технологии)
 - [Требования](#требования)
+- [Установка пакетов](#установка-пакетов)
+- [Получение API-токена](#получение-токена)
 - [Примеры использования](#примеры-использования)
 - [Тестирование](#тестирование)
 - [Команда проекта](#команда-проекта)
@@ -20,19 +22,40 @@
 - OS Linux
 - Google Chrome (Chromium)
 - Доступ в Интернет
+- Python3
+- Pip
+
+## Установка пакетов
+```sh
+~$ python3 -m venv venv
+~$ source venv/bin/activate
+(venv) $ pip install -r requirements.txt
+```
+
+## Получение токена
+1) Создаём файл .env
+```sh
+(venv) $ touch .env
+```
+2) В качестве тестового токена можно использовать `API_TOKEN='wiA1hUZnkvk7AvotYafUjjpXOsoiIpkj8kGLL8E7UHaLljVnp8nku47wSRvS'`.
+
+Для получения личного необходимо зарегистрироваться на https://goo.su/, перейти на вкладку API, получить токен.
+
+3) Скопировать ключ в переменную `API_TOKEN` в файле .env (см. пример в .env.example).
+
 
 ## Примеры использования
 
 Запись зашифрованного сообщения, используя сервисы одноразовых записок https://privatty.com и сокращения ссылок https://goo.su
 
 ```sh
-python3 stego.py --em -p VeRy$ecrEtPa$$woRD -m MyMessage -i poc/sample.m4a -o poc/stego.m4a
+(venv) $python3 stego.py --em -p VeRy$ecrEtPa$$woRD -m MyMessage -i poc/sample.m4a -o poc/stego.m4a
 ```
 
 Получение сообщения, используя сервисы одноразовых записок https://privatty.com и сокращения ссылок https://goo.su
 
 ```sh
-python3 stego.py --ex -p VeRy$ecrEtPa$$woRD -i poc/stego.m4a
+(venv) $python3 stego.py --ex -p VeRy$ecrEtPa$$woRD -i poc/stego.m4a
 ```
 
 ## Тестирование
@@ -42,16 +65,18 @@ python3 stego.py --ex -p VeRy$ecrEtPa$$woRD -i poc/stego.m4a
 Тест записи и чтения, используя сервис одноразовых записок https://onetimesecret.com
 
 ```sh
-cd tests;python3 -m unittest test_work_with_m4a_onetimesecret.TestMain
+(venv) $cd tests;python3 -m unittest test_work_with_m4a_onetimesecret.TestMain
 ```
 
 Тест записи и чтения, используя сервис одноноразовых записок https://privatty.com
 
 ```sh
-cd tests;python3 -m unittest test_work_with_m4a_privatty.TestMain
+(venv) $cd tests;python3 -m unittest test_work_with_m4a_privatty.TestMain
 ```
 
 ## Команда проекта
 <a href="https://github.com/yourProgrammist">Осин Кирилл</a>
 
 <a href="https://github.com/nurovAm">Нуров Амир</a>
+
+По вопросам и предложениям писать - https://t.me/osin_hjj
