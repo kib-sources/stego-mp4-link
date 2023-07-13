@@ -58,7 +58,7 @@ API_TOKEN='wi**********************************************'
 Получение сообщения, используя сервисы одноразовых записок https://privatty.com и сокращения ссылок https://goo.su
 
 ```sh
-(venv) ~$ python -m stego --em --ex -p VeRy$ecrEtPa$$woRD -i poc/stego.m4a
+(venv) ~$ python -m stego --ex -p VeRy$ecrEtPa$$woRD -i poc/stego.m4a
 ```
 
 ## Тестирование
