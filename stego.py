@@ -62,7 +62,7 @@ parser.add_argument(
     '-n', "--name",
     required=False,
     type=str,
-    default='privatty',
+    default='onetimesecret',
     choices=['privatty', 'onetimesecret'],
     help='enter service')
 parser.add_argument(
