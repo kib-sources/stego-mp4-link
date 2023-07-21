@@ -69,6 +69,11 @@ class TestMain(unittest.TestCase):
         choices=['goo'],
         help='enter service')
     parser.add_argument(
+        '-f', "--file",
+        required=False,
+        type=str,
+        help='enter *.txt file with massage')
+    parser.add_argument(
         '-i', "--input",
         type=str,
         help='enter <file_path> to *.m4a file')
@@ -144,18 +149,6 @@ class TestMain(unittest.TestCase):
         pathout = '../poc/stego_massage3.m4a'
         args = self.parser.parse_args(["--em", '-p', password, '-m', message, '-i', pathin, '-o', pathout, '-n', self.name])
         with self.assertRaises(core.errors.FileContainerError):
-            write_read_m4a(args)
-
-    def test5(self):
-        message = 'Message'
-        password = 'qwerty123'
-        pathin = '../poc/sample4.m4a'
-        pathout = '../poc/stego_massage3.m4a'
-        args = self.parser.parse_args(["--em", '-p', password, '-m', message, '-i', pathin, '-o', pathout, '-n', self.name])
-        write_read_m4a(args)
-        args = self.parser.parse_args(["--ex", '-p', password, '-i', pathout, '-n', self.name])
-        write_read_m4a(args)
-        with self.assertRaises(core.errors.MessageHasAlreadyRead):
             write_read_m4a(args)
 
     def test6(self):

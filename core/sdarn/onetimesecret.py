@@ -100,7 +100,8 @@ class OneTimeSecretSdarn(BaseSdarn):
         # нажимаем на кнопку "Да, показать запись"
         wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'btn'))).click()
         if driver.current_url == cls._base_url:
-            raise errors.MessageHasAlreadyRead
+            print("SORRY, MESSAGE HAS ALREADY READ")
+            exit()
         message = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "input-block-level"))).text
         driver.quit()  # выход из веб-драйвера
         return message

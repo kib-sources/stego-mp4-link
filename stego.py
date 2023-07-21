@@ -66,6 +66,11 @@ parser.add_argument(
     choices=['privatty', 'onetimesecret'],
     help='enter service')
 parser.add_argument(
+    '-f', "--file",
+    required=False,
+    type=str,
+    help='enter *.txt file with massage')
+parser.add_argument(
     '-l', "--link",
     required=False,
     type=str,
@@ -117,7 +122,7 @@ def write_read_m4a(args: argparse.Namespace) -> Message:
             exit()
     if args.em + args.ex == 0:
         raise FlagsError("Не введён флаг --ex или флаг --em")
-    if args.em and args.ex or args.debug and args.quiet:
+    if args.em and args.ex or args.debug and args.quiet or args.massage and args.file:
         raise FlagsError("Введённые флаги несовместимы")
     if args.em:
         link = main(args)
@@ -134,8 +139,16 @@ def write_read_m4a(args: argparse.Namespace) -> Message:
         link = main_read(args.input)
         args.url = link
         ex_massage = main(args)
-        print("Расшифрованное сообщение:  " + ex_massage + '\033[31m')
-        print("Пароль верен!" + '\033[0m')
+        if args.file:
+            with open(args.file, 'w') as f:
+                f.write(ex_massage)
+                if not args.quiet:
+                    print(f"Расшифрованное сообщение записано в {args.file}")
+                return ex_massage
+        if not args.quiet:
+            print('\033[31m' + "Пароль верен!" + '\033[0m')
+            print("Расшифрованное сообщение: " + ex_massage)
+        print(ex_massage)
         return ex_massage
 
 

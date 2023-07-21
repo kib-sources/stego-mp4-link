@@ -47,7 +47,7 @@ def check(word: str) -> bool:
     """
     Проверка на ASCII
     """
-    return all(map(lambda c: c in printable, word))
+    return all([ord(x) in range(128) for x in word])
 
 
 def main(args: argparse.Namespace):
@@ -56,7 +56,7 @@ def main(args: argparse.Namespace):
             print('------------------------EMBED MODE------------------------')
         if not args.password:
             raise errors.NotPassword("Пароль отсутствует!")
-        if not args.massage:
+        if not args.massage and not args.file:
             raise errors.NotMessage("Сообщение отсутствует!")
         if len(args.password) < LENGTH_PASSWORD:
             raise errors.LengthPassword("Длина пароля слишком мала")
@@ -64,6 +64,9 @@ def main(args: argparse.Namespace):
             raise errors.NotAsciiPassword("Пароль должен содержать символы только из ASCII")
         if not check(args.password):
             raise errors.NotAsciiMassage("Сообщение должно содержать символы только из ASCII")
+        if args.file:
+            with open(args.file, "r") as f:
+                args.massage = f.read()
         url = getSdarnClass(args.name).write(
             args.massage,
             args.password
