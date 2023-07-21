@@ -54,6 +54,11 @@ class TestMain(unittest.TestCase):
         action='store_true',
         help='extract encrypted message')
     parser.add_argument(
+        '-f', "--file",
+        required=False,
+        type=str,
+        help='enter *.txt file with massage')
+    parser.add_argument(
         "-p", "--password",
         type=str,
         help='enter your password')

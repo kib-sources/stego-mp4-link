@@ -52,15 +52,26 @@ API_TOKEN='wi**********************************************'
 Запись зашифрованного сообщения, используя сервисы одноразовых записок https://privatty.com и сокращения ссылок https://goo.su
 
 ```sh
-(venv) ~$ python -m stego --em -p VeRy$ecrEtPa$$woRD -m MyMessage -i poc/sample.m4a -o poc/stego.m4a
+(venv) ~$ python -m stego --em -p MaoZedong -m "Llueve sobre Santiago" -i poc/sample.m4a -o poc/secret.m4a
 ```
 
 Получение сообщения, используя сервисы одноразовых записок https://privatty.com и сокращения ссылок https://goo.su
 
 ```sh
-(venv) ~$ python -m stego --ex -p VeRy$ecrEtPa$$woRD -i poc/stego.m4a
+(venv) ~$ python -m stego --ex -p MaoZedong -i poc/secret.m4a
 ```
 
+Запись зашифрованного сообщения из текстового файла
+
+```sh
+(venv) ~$ python -m stego --em -p TheCloneWars -f massage.txt -i poc/sample2.m4a -o poc/secret.m4a
+```
+
+Получение сообщения и запись его в текстовый файл
+
+```sh
+(venv) ~$ python -m stego --ex -p TheCloneWars -f out_massage.txt -i poc/secret.m4a
+```
 ## Тестирование
 
 <p>Наш проект использует unit-test python.</p>
@@ -78,8 +89,7 @@ API_TOKEN='wi**********************************************'
 ```
 
 ## Команда проекта
-<a href="https://github.com/yourProgrammist">Осин Кирилл</a>
 
-<a href="https://github.com/nurovAm">Нуров Амир</a>
-
-По вопросам и предложениям писать - https://t.me/osin_hjj (Кирилл),  https://t.me/Amir_Nurov (Амир)
+Команда проекта:
+* [Осин Кирилл](https://github.com/yourProgrammist) (Telegram: [@osin_hjj]( https://t.me/osin_hjj ))
+* [Нуров Амир](https://github.com/nurovAm) (Telegram: [@Amir_Nurov ](https://t.me/Amir_Nurov ))
